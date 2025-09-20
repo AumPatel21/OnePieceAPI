@@ -22,14 +22,12 @@ def get_devil_fruits():
     df_category_table = df_main_table[0].find_all('table', class_='collapsible')
     # print(f"Found {len(df_category_table)} category table(s)")
 
-    # custom dictionary to store all the devil fruits in an organized manner
-    devil_fruits = {
-        'Paramecia': {'Canon':[], 'Non-Canon':[]},
-        'Zoan': {'Standard': [], 'Ancient': [], 'Mythical': [], 'Artificial': []},
-        'Logia': {'Canon': [], 'Non-Canon': []},
-        'Undetermined Class': {'Canon': [], 'Non-Canon': []}
-    }
-
+    # store all the devil fruits and respective data here
+    devil_fruits = []
+    
+    # Variable to assign ID's to each devil fruits
+    df_ID = 1
+    
     # loop through the main table
     for i, df_category_table in enumerate(df_category_table):
         # i represents the order of df categories on the webpage
@@ -39,55 +37,63 @@ def get_devil_fruits():
         elif i == 3: main_category = 'Undetermined Class'
         else: continue
         
+        # mark whether its Canon, Non-Canon
+        current_subcategory = None
+        current_canon_status = 'Canon'
+        
         # find the rows for subcategories
         rows = df_category_table.find_all('tr')
-        current_subcategory = None
-        
+        # print(rows)
         for row in rows:
+
             th = row.find('th')
             if th:
+                # FIXME non-canon status not applied correctly!
                 subcategory_text = th.get_text(strip=True)
-                if 'Canon' in subcategory_text:
-                    current_subcategory = 'Canon'
-                if 'Non-Canon' in subcategory_text:
-                    current_subcategory = 'Non-Canon'
-                if 'Standard' in subcategory_text:
-                    current_subcategory = 'Standard'
-                if 'Ancient' in subcategory_text:
-                    current_subcategory = 'Ancient'
-                if 'Mythical' in subcategory_text:
-                    current_subcategory = 'Mythical'
-                if 'Artificial' in subcategory_text:
-                    current_subcategory = 'Artificial'
-                
+
+                if 'Canon:' in subcategory_text:
+                    current_canon_status = 'Canon'
+                    current_subcategory = None
+                if 'Non-Canon:' in subcategory_text:
+                    current_canon_status = 'Non-Canon'
+                    current_subcategory = None
+                if any(x in subcategory_text for x in ['Standard', 'Ancient', 'Mythical', 'Artificial']):
+                    current_subcategory = subcategory_text
+                    current_canon_status = 'Canon' # Setting the default status for Zoan to canon
+                    
                 # extract devil fruits from each subcategory
-                if current_subcategory:
-                    links = row.find_all('a', title=True)
-                    for link in links:
+                list_items = row.find_all('li')
+                for li in list_items:
+                    link = li.find('a', title=True)
+                    if link:
                         fruit_name = link.get('title')
                         # if statement avoids links that'd dont have a devil fruit
                         if 'Category:' not in fruit_name and fruit_name not in ['v', 'e', '?']:
                             relative_url = link.get('href')
                             absolute_url = BASE_URL + relative_url if relative_url else None
-                            
+
+                            fruit_canon_status = current_canon_status
+                            # Check for non-canon symbol (≠) in this specific fruit   
+                            sup_tag = li.find('sup', class_='status-symbol')
+                            if sup_tag and sup_tag.get('title') == 'Non-Canon':
+                                    fruit_canon_status = 'Non-Canon'
+                                    
+                            if main_category == 'Zoan' and current_subcategory:
+                                # For Zoan, concatenate subcategory with main type
+                                fruit_type = f"{current_subcategory} Zoan"
+                            else:
+                                fruit_type = main_category
                             # add the devil fruit name and its url to our dictionary
-                            devil_fruits[main_category][current_subcategory].append({
+                            devil_fruits.append({
+                                'id': df_ID,
                                 'name': fruit_name,
+                                'type': fruit_type,
+                                'status': fruit_canon_status,
                                 'url': absolute_url
                             })
-    # Print the results
-    # for main_category, subcategories in devil_fruits.items():
-    #     print(f"\n=== {main_category.upper()} ===")
-    #     total_count = 0
-    #     for subcategory, fruits in subcategories.items():
-    #         print(f"\n  {subcategory}: {len(fruits)} fruits")
-    #         for fruit in fruits:
-    #             print(f"    - {fruit['name']}")
-    #         total_count += len(fruits)
-    #     print(f"  Total: {total_count} fruits")
-
-    # print(f"\nGRAND TOTAL: {sum(len(fruits) for category in devil_fruits.values() for fruits in category.values())} devil fruits")
-    
+                            df_ID += 1
+                            
+    print(f"\nGRAND TOTAL: {len(devil_fruits)} devil fruits")
     return devil_fruits
 
 def get_characters():
@@ -114,33 +120,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-
-
-
-
-
-
-
-
-
-# if df_main_table:
-#     df_category_table = df_main_table[0].find_all('table', class_='collapsible')
-
-#     for i in range(0, 4):
-#         category_links = df_category_table[i].find_all('a', title=True)
-#         print(f"Found {len(category_links)} devil fruits\n")
-#         for link in category_links:
-#             category_title = link.get('title')
-#             # Get the relative URL and make it absolute
-#             relative_url = link.get('href')
-#             absolute_url = BASE_URL + relative_url if relative_url else None
-            
-#             # You can also get the text content as backup
-#             text_content = link.get_text(strip=True)
-            
-#             print(f"Title: {category_title}")
-#             print(f"URL: {absolute_url}")
-#             # print(f"Link Text: {text_content}")
-#             print("---")
