@@ -8,6 +8,7 @@ BASE_URL = 'https://onepiece.fandom.com'
 CANON_CHAR_URL = "https://onepiece.fandom.com/wiki/List_of_Canon_Characters"
 NON_CANON_CHAR_URL = "https://onepiece.fandom.com/wiki/List_of_Non-Canon_Characters"
 
+# FIXME canon status not appearing in json for some reason
 def get_characters_url():
     canon_characters = []
     non_canon_characters = []
@@ -26,7 +27,7 @@ def get_characters_url():
         # print(link)
         url = BASE_URL + link['href']
         canon_characters.append({
-            'status': 'canon',
+            'canon_status': 'canon',
             'url': url
         })
     
@@ -42,13 +43,112 @@ def get_characters_url():
             continue
         link = cells[1].find('a')
         url = BASE_URL + link['href']
-        print(url)
+        # print(url)
         non_canon_characters.append({
-            'status': 'non-canon',
+            'canon_status': 'non-canon',
             'url': url
         })
     
     return canon_characters + non_canon_characters
+
+
+# currently the 'devilFruitId' is not entirely assigned correctly because some of the fruits have multiple users [(kaido, momonosuke), (kuma, s-bear), etc.] # FIXME NEEDS TO BE FIXED LATER!
+def get_character_details():
+    char_id = 1
+    characters = []
+    char_urls = get_characters_url()
+    
+    with open('data/devil_fruits.json', 'r') as df:
+        df_data = json.load(df)
+        # print(f"Reading {devil_fruits}!")
+    
+    # mapping characters to link their devil fruit's using id's from devil_fruits.json
+    fruit_map = {}
+    for f in df_data:
+        if 'current user' in f and f['current user']:
+            fruit_map[f['current user']] = f['id']
+        if 'previous user' in f and f['previous user']:
+            fruit_map[f['previous user']] = f['id']
+        
+    for char in char_urls:
+        try:
+            page = requests.get(char['url'])
+            soup = BeautifulSoup(page.text, 'html.parser')
+            section = soup.find('aside')
+            found_data = {'id': char_id}
+            if section:
+                title = section.find('h2')
+                if title:
+                    c_name = title.get_text(strip=True)
+                    found_data['name'] = c_name
+                    print(found_data['name'])
+            else:
+                print(f"  No character card found for {char['name']}")
+                continue
+            
+            char_name = found_data['name']
+            if char_name in fruit_map:
+                found_data['devilFruitId'] = fruit_map[char_name]
+                print(f"df_id is {found_data['devilFruitId']}")
+            else:
+                found_data['devilFruitId'] = None
+            
+            char_data = section.find_all('div', class_='pi-item pi-data pi-item-spacing pi-border-color')
+            
+            for data in char_data:
+                data_source = data.get('data-source')
+                value_div = data.find('div', class_='pi-data-value pi-font')
+                if not value_div:
+                    continue
+                # removing all the superscripts because they're not needed
+                for sup in value_div.find_all('sup'):
+                    sup.decompose()
+                # Making sure old bounties are not scraped. Only need the latest number
+                for s in value_div.find_all('s'):
+                    s.decompose()
+                
+                if data_source in ['jname', 'meaning', 'type', 'user']:
+                    # using a slash to separate them, too many ,'s and ;'s
+                    value = value_div.get_text(separator=' / ', strip=True)
+                else:
+                    value = value_div.get_text()
+                if data_source =='jname':
+                    found_data['japanese Name'] = value
+                elif data_source =='first':
+                    found_data['debut'] = value
+                elif data_source =='affiliation':
+                    found_data['affiliations'] = value
+                elif data_source =='occupation':
+                    found_data['occupation'] = value
+                elif data_source == 'origin':
+                    found_data['origin'] = value
+                elif data_source =='residence':
+                    found_data['residence'] = value
+                elif data_source =='alias':
+                    found_data['alias'] = value
+                elif data_source =='epithet':
+                    found_data['epithet'] = value
+                elif data_source =='status':
+                    found_data['status'] = value
+                elif data_source =='age':
+                    found_data['age'] = value
+                elif data_source =='birth':
+                    found_data['birthday'] = value
+                elif data_source =='blood type':
+                    found_data['blood-type'] = value
+                elif data_source =='bounty':
+                    found_data['bounty'] = value
+            
+            found_data['url'] = char['url']
+            # for a formatted json output for easier reading while debugging
+            # print(json.dumps(found_data, indent=4, ensure_ascii=False))
+            
+            characters.append(found_data)
+            char_id += 1
+        
+        except Exception as e:
+            print(f"Error processing {char['url']}: {e}")
+    return characters
 
 def save_to_json(data, filename):
     with open(filename, 'w', encoding='utf-8') as f:
@@ -57,23 +157,22 @@ def save_to_json(data, filename):
     print(f"Data saved to {filename}")
     return filename
 
+# code to extract html page:
+def get_html():
+    page = requests.get(CANON_CHAR_URL)
+    print(CANON_CHAR_URL)
+    soup = BeautifulSoup(page.text, 'html.parser')
+    content = soup.prettify()
+    with open("page.html", "w", encoding="utf-8") as file:
+        file.write(content)
+    print ("File saved!")
+
 def main():
     print("Scraping character names...")
-    characters = get_characters_url()
+    characters = get_character_details()
     print("Adding scraped characters to a json file")
     filename = save_to_json(characters, "characters.json")
     print(f"{filename} created successfully!\n\n")
     
 if __name__ == "__main__":
     main()
-    
-
-# code to extract html page:
-
-    # canon_page = requests.get(CANON_CHAR_URL)
-    # print(CANON_CHAR_URL)
-    # soup = BeautifulSoup(canon_page.text, 'html.parser')
-    # content = soup.prettify()
-    # with open("canon_page.html", "w", encoding="utf-8") as file:
-    #     file.write(content)
-    # print ("File saved!")
