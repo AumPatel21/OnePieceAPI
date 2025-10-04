@@ -113,7 +113,7 @@ def get_fruit_details():
                 # a way to separate keys that have multiple values for JSON
                 if data_source in ['ename', 'jname', 'meaning', 'type', 'user']:
                     # using a slash to separate them, too many ,'s and ;'s
-                    value = value_div.get_text(separator=' / ', strip=True)
+                    value = value_div.get_text(separator=' | ', strip=True)
                 else:
                     value = value_div.get_text()
 
