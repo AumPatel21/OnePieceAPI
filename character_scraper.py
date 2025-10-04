@@ -52,7 +52,6 @@ def get_characters_url():
     return canon_characters + non_canon_characters
 
 
-# currently the 'devilFruitId' is not entirely assigned correctly because some of the fruits have multiple users [(kaido, momonosuke), (kuma, s-bear), etc.] # FIXME NEEDS TO BE FIXED LATER!
 def get_character_details():
     char_id = 1
     characters = []
@@ -65,10 +64,13 @@ def get_character_details():
     # mapping characters to link their devil fruit's using id's from devil_fruits.json
     fruit_map = {}
     for f in df_data:
-        if 'current user' in f and f['current user']:
-            fruit_map[f['current user']] = f['id']
-        if 'previous user' in f and f['previous user']:
-            fruit_map[f['previous user']] = f['id']
+        for key in ['current user', 'previous user']:
+            if key in f and f[key]:
+                # Split on common separators: slash or comma
+                users = [u.strip() for u in f[key].replace(';', '/').split('/')]
+                for user in users:
+                    if user:  # skip empty strings
+                        fruit_map[user] = f['id']
         
     for char in char_urls:
         try:
@@ -87,11 +89,6 @@ def get_character_details():
                 continue
             
             char_name = found_data['name']
-            if char_name in fruit_map:
-                found_data['devilFruitId'] = fruit_map[char_name]
-                print(f"df_id is {found_data['devilFruitId']}")
-            else:
-                found_data['devilFruitId'] = None
             
             char_data = section.find_all('div', class_='pi-item pi-data pi-item-spacing pi-border-color')
             
@@ -107,14 +104,18 @@ def get_character_details():
                 for s in value_div.find_all('s'):
                     s.decompose()
                 
-                if data_source in ['jname', 'meaning', 'type', 'user']:
+                if data_source in ['jname']:
                     # using a slash to separate them, too many ,'s and ;'s
-                    value = value_div.get_text(separator=' / ', strip=True)
+                    value = value_div.get_text(separator=' | ', strip=True)
+                if data_source in ['alias', 'epithet']:
+                    value = value_div.get_text().replace('"', ',') 
                 else:
                     value = value_div.get_text()
+                    
                 if data_source =='jname':
-                    found_data['japanese Name'] = value
-                elif data_source =='first':
+                    found_data['japanese name'] = value
+                found_data['devilFruitId'] = fruit_map.get(char_name, None)
+                if data_source =='first':
                     found_data['debut'] = value
                 elif data_source =='affiliation':
                     found_data['affiliations'] = value
@@ -138,8 +139,10 @@ def get_character_details():
                     found_data['blood-type'] = value
                 elif data_source =='bounty':
                     found_data['bounty'] = value
-            
+            found_data['canon_status'] = char['canon_status']
             found_data['url'] = char['url']
+            
+            print(f"df_id is {found_data['devilFruitId']}")
             # for a formatted json output for easier reading while debugging
             # print(json.dumps(found_data, indent=4, ensure_ascii=False))
             
