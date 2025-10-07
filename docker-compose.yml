@@ -1,0 +1,12 @@
+services:
+  db:
+    image: postgres:15
+    container_name: onepiece_db
+    environment:
+      POSTGRES_USER: aum
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: onepiece
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./db_data:/var/lib/postgresql/data
