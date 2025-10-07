@@ -8,7 +8,6 @@ BASE_URL = 'https://onepiece.fandom.com'
 CANON_CHAR_URL = "https://onepiece.fandom.com/wiki/List_of_Canon_Characters"
 NON_CANON_CHAR_URL = "https://onepiece.fandom.com/wiki/List_of_Non-Canon_Characters"
 
-# FIXME canon status not appearing in json for some reason
 def get_characters_url():
     canon_characters = []
     non_canon_characters = []
@@ -113,8 +112,8 @@ def get_character_details():
                     value = value_div.get_text()
                     
                 if data_source =='jname':
-                    found_data['japanese name'] = value
-                found_data['devilFruitId'] = fruit_map.get(char_name, None)
+                    found_data['japanese_name'] = value
+                found_data['df_id'] = fruit_map.get(char_name, None)
                 if data_source =='first':
                     found_data['debut'] = value
                 elif data_source =='affiliation':
@@ -136,13 +135,13 @@ def get_character_details():
                 elif data_source =='birth':
                     found_data['birthday'] = value
                 elif data_source =='blood type':
-                    found_data['blood-type'] = value
+                    found_data['blood_type'] = value
                 elif data_source =='bounty':
                     found_data['bounty'] = value
             found_data['canon_status'] = char['canon_status']
             found_data['url'] = char['url']
             
-            print(f"df_id is {found_data['devilFruitId']}")
+            print(f"df_id is {found_data['df_id']}")
             # for a formatted json output for easier reading while debugging
             # print(json.dumps(found_data, indent=4, ensure_ascii=False))
             

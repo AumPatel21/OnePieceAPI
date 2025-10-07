@@ -118,21 +118,21 @@ def get_fruit_details():
                     value = value_div.get_text()
 
                 if data_source =='jname':
-                    found_data['japanese Name'] = value
+                    found_data['japanese_name'] = value
                 elif data_source =='ename':
-                    found_data['english Name'] = value
+                    found_data['english_name'] = value
                 elif data_source =='meaning':
                     found_data['meaning']= value
                 elif data_source =='fruit':
-                    found_data['fruit debut'] = value
+                    found_data['fruit_debut'] = value
                 elif data_source =='first':
-                    found_data['usage debut'] = value
+                    found_data['usage_debut'] = value
                 elif data_source =='type':
                     found_data['type'] = value
                 elif data_source == 'previous':
-                    found_data['previous user'] = value
+                    found_data['previous_user'] = value
                 elif data_source =='user':
-                    found_data['current user'] = value
+                    found_data['current_user'] = value
             # move the status and url to the end
             found_data['status'] = fruit['status']
             found_data['url'] = fruit['url']
@@ -147,11 +147,6 @@ def get_fruit_details():
     return devil_fruits
 
 def save_to_json(data, filename=None):
-    if filename is None:
-        # Create a filename with timestamp
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        filename = f"devil_fruits_{timestamp}.json"
-    
     with open(filename, 'w', encoding='utf-8') as f:
         json.dump(data, f, indent=4, ensure_ascii=False)
     
