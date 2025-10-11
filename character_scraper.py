@@ -1,7 +1,6 @@
 from bs4 import BeautifulSoup
 import requests
 import json
-from datetime import datetime
 
 # URL's to scrape
 BASE_URL = 'https://onepiece.fandom.com'
