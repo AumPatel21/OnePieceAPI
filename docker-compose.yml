@@ -10,3 +10,13 @@ services:
       - "5432:5432"
     volumes:
       - ./db_data:/var/lib/postgresql/data
+
+  app:
+    build: .
+    depends_on:
+      - db
+    environment:
+      DB_HOST: db
+      DB_NAME: onepiece
+      DB_USER: aum
+      DB_PASSWORD: password
