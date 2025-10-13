@@ -1,15 +1,22 @@
 import psycopg2
 import json
+import os
+
+DB_HOST = os.getenv('DB_HOST', 'localhost')
+DB_NAME = os.getenv('DB_NAME', 'onepiece')
+DB_USER = os.getenv('DB_USER', 'aum') 
+DB_PASSWORD = os.getenv('DB_PASSWORD', 'password')
 
 def load_character_data():
     try:
         conn = psycopg2.connect(
-            dbname="onepiece",
-            user="aum",
-            password="password",
-            host="localhost",
+            dbname=DB_NAME,
+            user=DB_USER,
+            password=DB_PASSWORD,
+            host=DB_HOST,
             port="5432"
         )
+        print("Successfully connected to PostgreSQL!")
         cursor = conn.cursor()
     except psycopg2.Error as e:
         print(f"Error connecting to PostgreSQL: {e}")
@@ -52,12 +59,13 @@ def load_character_data():
 def load_df_data():
     try:
         conn = psycopg2.connect(
-            dbname="onepiece",
-            user="aum",
-            password="password",
-            host="localhost",
+            dbname=DB_NAME,
+            user=DB_USER,
+            password=DB_PASSWORD,
+            host=DB_HOST,
             port="5432"
         )
+        print("Successfully connected to PostgreSQL!")
         cursor = conn.cursor()
     except psycopg2.Error as e:
         print(f"Error connecting to PostgreSQL: {e}")
@@ -89,6 +97,9 @@ def load_df_data():
         except psycopg2.Error as e:
             print(f"Error inserting devil druit JSON data: {e}")
             conn.rollback()
+    cursor.close()
+    conn.close()
+
 def main():
     print("Loading devil fruit data to SQL database")
     load_df_data()
