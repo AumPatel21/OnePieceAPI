@@ -1,3 +1,5 @@
+# Script used to upload scraped data into PostgreSQL database
+
 import psycopg2
 import json
 import os

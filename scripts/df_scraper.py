@@ -1,3 +1,5 @@
+# Script used to scrape devil fruits from the one piece fandom webpage
+
 from bs4 import BeautifulSoup
 import requests
 import json

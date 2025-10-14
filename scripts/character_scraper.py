@@ -1,3 +1,5 @@
+# Script used to scrape characters from the one piece fandom webpage
+
 from bs4 import BeautifulSoup
 import requests
 import json
