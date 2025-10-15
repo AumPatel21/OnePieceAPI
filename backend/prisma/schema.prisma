@@ -1,0 +1,46 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model characters {
+  id            Int           @id
+  name          String?
+  japanese_name String?
+  df_id         Int?
+  debut         String?
+  affiliations  String?
+  occupation    String?
+  origin        String?
+  residence     String?
+  alias         String?
+  epithet       String?
+  status        String?
+  age           String?
+  birthday      String?
+  blood_type    String?
+  bounty        String?
+  url           String?
+  devil_fruits  devil_fruits? @relation(fields: [df_id], references: [id], onUpdate: NoAction)
+}
+
+model devil_fruits {
+  id             Int          @id
+  name           String?
+  japanese_name  String?
+  english_name   String?
+  meaning        String?
+  fruit_debut    String?
+  usage_debut    String?
+  type           String?
+  previous_owner String?
+  current_owner  String?
+  status         String?
+  url            String?
+  characters     characters[]
+}

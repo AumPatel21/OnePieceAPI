@@ -12,4 +12,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # Default commands
-CMD [ "python", "load_data.py" ]
+CMD [ "python", "scripts/load_data.py" ]
