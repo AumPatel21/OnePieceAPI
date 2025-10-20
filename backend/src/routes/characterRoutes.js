@@ -1,8 +1,8 @@
 import express from 'express';
-import { getCharacters } from '../controllers/characterController.js';
+import getCharacters from '../controllers/characterController.js';
 
-const router = express.Router();
+const characterRouter = express.Router();
 
-router.get('/', getCharacters);
+characterRouter.get('/', getCharacters);
 
-export default router;
+export default characterRouter;

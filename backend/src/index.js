@@ -3,12 +3,21 @@ import cors from 'cors';
 import morgan from 'morgan'
 import dotenv from 'dotenv';
 import prisma from './utils/db.js';
-import getCharacters from './controllers/characterController.js';
-import getDevilFruits from './controllers/devilFruitController.js';
+import characterRouter from './routes/characterRoutes.js';
+import devilFruitRouter from './routes/devilFruitRoutes.js';
+
+/*
+working get requests:
+http://localhost:3000/characters
+http://localhost:3000/characters?page=2&limit=20
+http://localhost:3000/characters?bounty_gte=1000000000
+http://localhost:3000/characters?devil_fruit=Gomu
+http://localhost:3000/characters?affiliation=Straw%20Hat
+http://localhost:3000/devil-fruits?type=Zoan
+*/
 
 // load environment variables
 dotenv.config()
-
 
 const app = express();
 const PORT = 3000;
@@ -22,8 +31,9 @@ app.get("/", (req, res) => {
 });
 
 // routes
-app.use('/', getCharacters)
-app.use('/', getDevilFruits)
+app.use('/characters', characterRouter);
+app.use('/devil-fruits', devilFruitRouter);
+
 
 
 // app.get("/test-db", async (req, res) => {

@@ -1,8 +1,8 @@
 import express from 'express';
-import { getDevilFruits } from '../controllers/devilFruitController.js';
+import getDevilFruits from '../controllers/devilFruitController.js';
 
-const router = express.Router();
+const devilFruitRouter = express.Router();
 
-router.get('/', getDevilFruits);
+devilFruitRouter.get('/', getDevilFruits);
 
-export default router;
+export default devilFruitRouter;

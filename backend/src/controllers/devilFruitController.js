@@ -1,9 +1,8 @@
-import { skip } from '@prisma/client/runtime/library';
 import prisma from '../utils/db.js'
 
 const getDevilFruits = async (req, res) => {
     try {
-        const { type, page = 1, limit = 10 } = res.query;
+        const { type, page = 1, limit = 10 } = req.query;
         const filters = {};
 
         if (type) filters.type = { contains: type, mode: 'insensitive' };
@@ -24,7 +23,7 @@ const getDevilFruits = async (req, res) => {
             data: devilFruits,
         });
     } catch (err) {
-        res.status(500).json({ error: 'Failed to fetch characters' });
+        res.status(500).json({ error: 'Failed to fetch devil fruits' });
     }
 };
 
