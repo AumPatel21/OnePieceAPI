@@ -17,8 +17,11 @@ services:
       timeout: 5s
       retries: 5
 
-  app:
-    build: .
+  backend:
+    build: ./backend
+    container_name: onepiece_backend
+    ports:
+      - "3000:3000"
     depends_on:
       db:
         condition: service_healthy
@@ -27,5 +30,15 @@ services:
       DB_NAME: onepiece
       DB_USER: aum
       DB_PASSWORD: password
-    # command: >
-    #   sh -c "sleep 5 && python load_data.py"
+
+  scraper:
+    build: .
+    container_name: onepiece_scraper
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_HOST: db
+      DB_NAME: onepiece
+      DB_USER: aum
+      DB_PASSWORD: password
