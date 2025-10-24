@@ -32,5 +32,6 @@ CREATE TABLE
         birthday TEXT,
         blood_type TEXT,
         bounty TEXT,
+        bounty_numeric BIGINT,
         url TEXT
     );

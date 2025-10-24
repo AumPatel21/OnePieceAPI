@@ -24,6 +24,7 @@ model characters {
   birthday      String?
   blood_type    String?
   bounty        String?
+  bounty_numeric BigInt?
   url           String?
   devil_fruits  devil_fruits? @relation(fields: [df_id], references: [id], onUpdate: NoAction)
 }

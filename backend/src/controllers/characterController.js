@@ -1,6 +1,6 @@
 import prisma from '../utils/db.js'
 import sendResponse from '../utils/response.js';
-
+// TODO work on bounty filtering issue!!!
 const getCharacters = async (req, res) => {
     // debugging
     console.log('🔍 getCharacters called with query:', req.query);
@@ -36,13 +36,32 @@ const getCharacters = async (req, res) => {
             };
         }
         if (bounty_gte || bounty_lte) {
-            filters.bounty = {};
-            // remove commas
-            const cleaned_gte = parseInt(bounty_gte.replace(/[^0-9]/g, ''));
-            const cleaned_lte = parseInt(bounty_lte.replace(/[^0-9]/g, ''));
+            filters.bounty_numeric = {};
+            console.log('💰 Bounty filters - raw:', { bounty_gte, bounty_lte });
+
+            // const cleaned_gte = parseInt(bounty_gte);
+            // const cleaned_lte = parseInt(bounty_lte);
             // added !isNaN() to for input validation  
-            if (!isNaN(bounty_gte)) { filters.bounty.gte = cleaned_gte; }
-            if (!isNaN(bounty_lte)) { filters.bounty.lte = cleaned_lte; }
+            if (bounty_gte) {
+                const cleaned_gte = parseInt(bounty_gte);
+                console.log('💰 GTE - parsed:', cleaned_gte, 'valid:', !isNaN(cleaned_gte));
+                if (!isNaN(cleaned_gte)) {
+                    filters.bounty_numeric.gte = cleaned_gte;
+                }
+            }
+            if (bounty_lte) {
+                const cleaned_lte = parseInt(bounty_lte);
+                console.log('💰 LTE - parsed:', cleaned_lte, 'valid:', !isNaN(cleaned_lte));
+                if (!isNaN(cleaned_lte)) {
+                    filters.bounty_numeric.lte = cleaned_lte;
+                }
+            }
+            console.log('💰 Final bounty filter:', filters.bounty_numeric);
+            // If no valid filters, remove the empty object
+            if (Object.keys(filters.bounty_numeric).length === 0) {
+                delete filters.bounty_numeric;
+                console.log('💰 No valid bounty filters applied');
+            }
         }
         if (status) filters.status = { contains: status, mode: 'insensitive' };
 

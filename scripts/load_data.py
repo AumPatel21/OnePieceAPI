@@ -102,11 +102,43 @@ def load_df_data():
     cursor.close()
     conn.close()
 
+def update_bounty_numeric():
+    try:
+        conn = psycopg2.connect(
+            dbname=DB_NAME,
+            user=DB_USER,
+            password=DB_PASSWORD,
+            host=DB_HOST,
+            port="5432"
+        )
+        print("Updating bounty_numeric values...")
+        cursor = conn.cursor()
+        
+        # Update bounty_numeric with clean numeric values
+        update_query = """
+        UPDATE characters 
+        SET bounty_numeric = CAST(regexp_replace(bounty, '[^0-9]', '', 'g') AS BIGINT)
+        WHERE bounty ~ '\\d'
+        """
+        cursor.execute(update_query)
+        conn.commit()
+        
+        # Check how many were updated
+        cursor.execute("SELECT COUNT(*) FROM characters WHERE bounty_numeric IS NOT NULL")
+        count = cursor.fetchone()[0]
+        print(f"✅ Updated bounty_numeric for {count} characters")
+        
+        cursor.close()
+        conn.close()
+    except psycopg2.Error as e:
+        print(f"Error updating bounty_numeric: {e}")
+
 def main():
     print("Loading devil fruit data to SQL database")
     load_df_data()
     print("Loading character data to SQL database")
     load_character_data()
-    
+    print("Updating bounty numeric values")
+    update_bounty_numeric()
 if __name__ == "__main__":
     main()
