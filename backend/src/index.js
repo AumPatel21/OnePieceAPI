@@ -2,18 +2,38 @@ import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan'
 import dotenv from 'dotenv';
-import prisma from './utils/db.js';
 import characterRouter from './routes/characterRoutes.js';
 import devilFruitRouter from './routes/devilFruitRoutes.js';
 
 /*
-working get requests:
+Example tests:
+-----Characters-----
 http://localhost:3000/characters
-http://localhost:3000/characters?page=2&limit=20
-http://localhost:3000/characters?bounty_gte=1000000000
-http://localhost:3000/characters?devil_fruit=Gomu
-http://localhost:3000/characters?affiliation=Straw%20Hat
-http://localhost:3000/devil-fruits?type=Zoan
+http://localhost:3000/characters?name=luffy
+http://localhost:3000/characters?affiliation=straw%20hat
+http://localhost:3000/characters?occupation=pirate
+
+http://localhost:3000/characters?status=alive
+
+
+http://localhost:3000/characters?page=2&limit=5
+http://localhost:3000/characters?sort=bounty&order=desc
+http://localhost:3000/characters?sort=bounty&order=asc
+http://localhost:3000/characters?sort=name&order=asc
+http://localhost:3000/characters?name=zoro&affiliation=straw%20hat&occupation=swordsman&status=alive&sort=bounty&order=desc&page=1&limit=3
+
+-----Devil Fruits-----
+http://localhost:3000/devil-fruits
+http://localhost:3000/devil-fruits?name=gomu
+http://localhost:3000/devil-fruits?type=paramecia
+http://localhost:3000/devil-fruits?current_owner=luffy
+http://localhost:3000/devil-fruits?previous_owner=ace
+http://localhost:3000/devil-fruits?status=canon
+http://localhost:3000/devil-fruits?status=non-canon
+http://localhost:3000/devil-fruits?sort=name&order=asc
+http://localhost:3000/devil-fruits?sort=type&order=desc
+http://localhost:3000/devil-fruits?page=2&limit=5
+http://localhost:3000/devil-fruits?type=logia&status=canon&sort=name&order=asc
 */
 
 // load environment variables

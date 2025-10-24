@@ -7,9 +7,12 @@ const getCharacters = async (req, res) => {
 
     try {
         const {
+            name,
             affiliation,
+            occupation,
             bounty_gte,
             bounty_lte,
+            status,
             devil_fruit,
             order = 'asc',
             sort,
@@ -18,12 +21,13 @@ const getCharacters = async (req, res) => {
         } = req.query;
 
         const filters = {}
+        // responses can be sorted ascending or descending
         const orderBy = sort ? { [sort]: order.toLowerCase() == 'desc' ? 'desc' : 'asc' } : undefined;
 
-        // Affiliation filter
+        // multiple filters to get a variety of responses
+        if (name) filters.name = { contains: name, mode: 'insensitive' };
         if (affiliation) filters.affiliations = { contains: affiliation, mode: 'insensitive' };
-
-        // Devil fruit filter
+        if (occupation) filters.occupation = { contains: occupation, mode: 'insensitive' };
         if (devil_fruit) {
             filters.devil_fruits = {
                 some: {
@@ -31,30 +35,23 @@ const getCharacters = async (req, res) => {
                 }
             };
         }
-
-        // Bounty filter
         if (bounty_gte || bounty_lte) {
             filters.bounty = {};
-
-            if (bounty_gte) {
-                const cleaned_gte = parseInt(bounty_gte.replace(/[^0-9]/g, '')); // remove commas
-                filters.bounty.gte = cleaned_gte;
-            }
-            if (bounty_lte) {
-                const cleaned_lte = parseInt(bounty_lte.replace(/[^0-9]/g, '')); // remove commas
-                filters.bounty.lte = cleaned_lte;
-            }
+            // remove commas
+            const cleaned_gte = parseInt(bounty_gte.replace(/[^0-9]/g, ''));
+            const cleaned_lte = parseInt(bounty_lte.replace(/[^0-9]/g, ''));
+            // added !isNaN() to for input validation  
+            if (!isNaN(bounty_gte)) { filters.bounty.gte = cleaned_gte; }
+            if (!isNaN(bounty_lte)) { filters.bounty.lte = cleaned_lte; }
         }
-
-        const skip = (page - 1) * limit;
-        const take = parseInt(limit);
+        if (status) filters.status = { contains: status, mode: 'insensitive' };
 
         const [characters, total] = await Promise.all([
             prisma.characters.findMany({
                 where: filters,
                 include: { devil_fruits: true },
-                skip,
-                take,
+                skip: (page - 1) * limit,
+                take: parseInt(limit),
                 orderBy,
             }),
             prisma.characters.count({ where: filters }),
@@ -65,13 +62,11 @@ const getCharacters = async (req, res) => {
         console.log('📈 Total count:', total);
 
         return sendResponse(res, 200, {
-            data: characters,
-            pagination: {
-                page: parseInt(page),
-                limit: parseInt(limit),
-                total,
-                totalPages: Math.ceil(total / limit)
-            }
+            page: parseInt(page),
+            limit: parseInt(limit),
+            total,
+            totalPages: Math.ceil(total / limit),
+            results: characters,
         }, '✅ Characters fetched successfully')
     } catch (err) {
         console.error(err);
@@ -80,15 +75,3 @@ const getCharacters = async (req, res) => {
 };
 
 export default getCharacters;
-
-// res.json({
-//     // page: parseInt(page),
-//     // limit: parseInt(limit),
-//     // total,
-//     // data: characters,
-//     page: page,
-//     // limit: limit,
-//     totalPages: Math.ceil(total / limit),
-//     totalResults: total,
-//     results: characters
-// });
