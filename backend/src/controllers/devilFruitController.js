@@ -72,3 +72,28 @@ export const getDevilFruitbyId = async (req, res, next) => {
         next(err);
     }
 };
+
+// for PUT requests
+export const updateDevilFruit = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const data = req.validate?.body || req.body;
+
+        // check if the devil fruit exists first
+        const existing = await prisma.devil_fruits.findUnique({
+            where: { id: parseInt(id) },
+        });
+
+        if (!existing) {
+            return httpError("❌ Character not found", 404);
+        }
+
+        const updated = await prisma.devil_fruits.update({
+            where: { id: parseInt(id) },
+            data
+        });
+        return sendResponse(res, 200, updated, "✅ Character updated successfully")
+    } catch (err) {
+        next(err);
+    }
+};

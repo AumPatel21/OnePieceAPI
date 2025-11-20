@@ -1,6 +1,6 @@
 import z from "zod"
 
-const dfQuerySchema = z.object({
+export const dfQuerySchema = z.object({
     query: z.object({
         name: z.string().optional(),
         type: z.enum(["Paramecia", "Logia", "Zoan", "Ancient Zoan", "Mythical Zoan"]).optional(),
@@ -24,4 +24,5 @@ const dfQuerySchema = z.object({
     }),
 });
 
-export default dfQuerySchema;
+// for PUT requests
+export const updateDfSchema = dfQuerySchema.partial();

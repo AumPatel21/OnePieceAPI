@@ -65,7 +65,7 @@ export const getCharacters = async (req, res, next) => {
         ]);
 
         if (characters.length == 0) {
-            throw httpError("No characters found with given filters", 404);
+            throw httpError("❌ No characters found with given filters", 404);
         }
 
         // debugging
@@ -96,6 +96,33 @@ export const getCharacterById = async (req, res, next) => {
             return sendResponse(res, 404, null, "❌ Character not found")
         }
         return sendResponse(res, 200, character, "✅ Character fetched successfully")
+    } catch (err) {
+        next(err);
+    }
+};
+
+// for PUT requests
+export const updateCharacter = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const data = req.validated?.body || req.body;
+
+        // check if the character exists first
+        const existing = await prisma.characters.findUnique({
+            where: { id: parseInt(id) },
+            include: { devil_fruits: true },
+        });
+
+        if (!existing) {
+            throw httpError("❌ Character not found", 404);
+        }
+
+        // update character
+        const updated = await prisma.characters.update({
+            where: { id: parseInt(id) },
+            data
+        });
+        return sendResponse(res, 200, updated, "✅ Character updated successfully")
     } catch (err) {
         next(err);
     }

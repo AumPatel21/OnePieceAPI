@@ -1,6 +1,6 @@
 import z from "zod";
 
-const characterQuerySchema = z.object({
+export const characterQuerySchema = z.object({
     query: z.object({
         name: z.string().optional(),
         affiliation: z.string().optional(),
@@ -34,4 +34,5 @@ const characterQuerySchema = z.object({
     }),
 });
 
-export default characterQuerySchema;
+// for PUT requests
+export const updateCharacterSchema = characterQuerySchema.partial();
