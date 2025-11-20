@@ -21,6 +21,8 @@ app.get("/", (req, res) => {
     res.send("One Piece API backend is running ⚓");
 });
 
+// app.get("/characters/:id",)
+
 // routes
 app.use('/characters', characterRouter);
 app.use('/devil-fruits', devilFruitRouter);
