@@ -67,13 +67,13 @@ export const getDevilFruitbyId = async (req, res, next) => {
         if (!devil_fruit) {
             return sendResponse(res, 404, null, "❌ Character not found")
         }
-        return sendResponse(res, 200, devil_fruit, "✅ Character fetched successfully")
+        return sendResponse(res, 200, devil_fruit, "✅ Character FETCHED successfully")
     } catch (err) {
         next(err);
     }
 };
 
-// for PUT requests
+// PUT requests
 export const updateDevilFruit = async (req, res, next) => {
     try {
         const { id } = req.params;
@@ -92,7 +92,31 @@ export const updateDevilFruit = async (req, res, next) => {
             where: { id: parseInt(id) },
             data
         });
-        return sendResponse(res, 200, updated, "✅ Character updated successfully")
+        return sendResponse(res, 200, updated, "✅ Character UPDATED successfully")
+    } catch (err) {
+        next(err);
+    }
+};
+
+// DELETE requests
+export const deleteDevilFruit = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+
+        // check if the character exists first
+        const existing = await prisma.devil_fruits.findUnique({
+            where: { id: parseInt(id) },
+        });
+
+        if (!existing) {
+            throw httpError("❌ Character not found", 404);
+        }
+
+        // delete character resource
+        const deleted = await prisma.devil_fruits.delete({
+            where: { id: parseInt(id) },
+        })
+        sendResponse(res, 200, deleted, "✅ Character DELETED successfully");
     } catch (err) {
         next(err);
     }
