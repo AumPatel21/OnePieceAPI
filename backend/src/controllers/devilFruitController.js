@@ -2,6 +2,7 @@ import prisma from '../utils/db.js'
 import httpError from '../utils/httpError.js';
 import sendResponse from '../utils/response.js';
 
+// GET requests
 export const getDevilFruits = async (req, res, next) => {
     // debugging
     console.log('🔍 getDevilFruits called with query:', req.validated?.query || req.query);
@@ -57,6 +58,7 @@ export const getDevilFruits = async (req, res, next) => {
     }
 };
 
+// GET requests by ID
 export const getDevilFruitbyId = async (req, res, next) => {
     try {
         const { id } = req.params;
@@ -73,7 +75,16 @@ export const getDevilFruitbyId = async (req, res, next) => {
     }
 };
 
-// PUT requests
+// POST requests #TODO this and Zod schema
+export const createDevilFruit = async (req, res, next) => {
+    try {
+
+    } catch (err) {
+        next(err);
+    }
+}
+
+// PUT/PATCH requests
 export const updateDevilFruit = async (req, res, next) => {
     try {
         const { id } = req.params;

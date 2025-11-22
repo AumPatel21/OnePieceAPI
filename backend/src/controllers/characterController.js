@@ -2,6 +2,7 @@ import prisma from '../utils/db.js'
 import httpError from '../utils/httpError.js';
 import sendResponse from '../utils/response.js';
 
+// GET requests
 export const getCharacters = async (req, res, next) => {
     // debugging
     console.log('🔍 getCharacters called with query:', req.validated.query || req.query);
@@ -84,6 +85,7 @@ export const getCharacters = async (req, res, next) => {
     }
 };
 
+// GET requests by ID
 export const getCharacterById = async (req, res, next) => {
     try {
         const { id } = req.params;
@@ -101,7 +103,25 @@ export const getCharacterById = async (req, res, next) => {
     }
 };
 
-// PUT requests
+// POST requests
+export const createCharacter = async (req, res, next) => {
+    try {
+        const data = req.validated?.body || req.body;
+        // take care of the bounty numeric conversion
+        if (data.bounty) {
+            data.bounty_numeric = BigInt(
+                data.bounty.replace(/[^0-9]/g, "")
+            );
+        }
+        const newCharacter = await prisma.characters.create({ data });
+
+        return sendResponse(res, 201, newCharacter, "✅ Character ADDED successfully");
+    } catch (err) {
+        next(err);
+    }
+};
+
+// PUT/PATCH requests
 export const updateCharacter = async (req, res, next) => {
     try {
         const { id } = req.params;

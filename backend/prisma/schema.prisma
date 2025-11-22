@@ -8,7 +8,7 @@ datasource db {
 }
 
 model characters {
-  id            Int           @id
+  id            Int           @id @default(autoincrement())
   name          String?
   japanese_name String?
   df_id         Int?
@@ -30,7 +30,7 @@ model characters {
 }
 
 model devil_fruits {
-  id             Int          @id
+  id             Int          @id @default(autoincrement())
   name           String?
   japanese_name  String?
   english_name   String?
