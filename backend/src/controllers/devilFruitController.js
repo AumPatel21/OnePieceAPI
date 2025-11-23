@@ -67,7 +67,7 @@ export const getDevilFruitbyId = async (req, res, next) => {
         });
 
         if (!devil_fruit) {
-            return sendResponse(res, 404, null, "❌ Character not found")
+            return sendResponse(res, 404, null, "❌ Devil Fruit not found")
         }
         return sendResponse(res, 200, devil_fruit, "✅ Character FETCHED successfully")
     } catch (err) {
@@ -78,7 +78,10 @@ export const getDevilFruitbyId = async (req, res, next) => {
 // POST requests #TODO this and Zod schema
 export const createDevilFruit = async (req, res, next) => {
     try {
+        const data = req.validates?.body || req.body;
+        const newDevilFruit = await prisma.devil_fruits.create({ data });
 
+        return sendResponse(res, 201, newDevilFruit, "✅ Devil Fruit CREATED successfully")
     } catch (err) {
         next(err);
     }

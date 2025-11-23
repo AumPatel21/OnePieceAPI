@@ -115,7 +115,7 @@ export const createCharacter = async (req, res, next) => {
         }
         const newCharacter = await prisma.characters.create({ data });
 
-        return sendResponse(res, 201, newCharacter, "✅ Character ADDED successfully");
+        return sendResponse(res, 201, newCharacter, "✅ Character CREATED successfully");
     } catch (err) {
         next(err);
     }

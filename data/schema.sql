@@ -1,6 +1,6 @@
 CREATE TABLE
     devil_fruits (
-        id INT PRIMARY KEY,
+        id SERIAL PRIMARY KEY,
         name TEXT,
         japanese_name TEXT,
         english_name TEXT,
@@ -16,7 +16,7 @@ CREATE TABLE
 
 CREATE TABLE
     characters (
-        id INT PRIMARY KEY,
+        id SERIAL PRIMARY KEY,
         name TEXT,
         japanese_name TEXT,
         df_id INT REFERENCES devil_fruits (id) ON DELETE SET NULL,

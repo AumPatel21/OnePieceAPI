@@ -14,5 +14,4 @@ characterRouter.put('/:id', validate(updateCharacterSchema), updateCharacter);
 
 characterRouter.delete('/:id', deleteCharacter);
 
-
 export default characterRouter;

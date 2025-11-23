@@ -27,10 +27,9 @@ def load_character_data():
     with open("data/characters.json") as ch:
         characters = json.load(ch)
     
-    insert_character = "INSERT INTO characters (id, name, japanese_name, df_id, debut, affiliations, occupation, origin, residence, alias, epithet, status, age, birthday, blood_type, bounty, url) VALUES (%(id)s, %(name)s, %(japanese_name)s,  %(df_id)s, %(debut)s, %(affiliations)s, %(occupation)s, %(origin)s, %(residence)s, %(alias)s, %(epithet)s, %(status)s, %(age)s, %(birthday)s, %(blood_type)s, %(bounty)s, %(url)s) ON CONFLICT DO NOTHING"
+    insert_character = "INSERT INTO characters (name, japanese_name, df_id, debut, affiliations, occupation, origin, residence, alias, epithet, status, age, birthday, blood_type, bounty, url) VALUES (%(name)s, %(japanese_name)s,  %(df_id)s, %(debut)s, %(affiliations)s, %(occupation)s, %(origin)s, %(residence)s, %(alias)s, %(epithet)s, %(status)s, %(age)s, %(birthday)s, %(blood_type)s, %(bounty)s, %(url)s) ON CONFLICT DO NOTHING"
     for char in characters:
         char_data = {
-            'id': char.get('id'),
             'name': char.get('name'),
             'japanese_name': char.get('japanese_name'),
             'df_id': char.get('df_id'),
@@ -77,10 +76,9 @@ def load_df_data():
         devil_fruits = json.load(d)
         
     # comand to insert df data into the table
-    insert_df = "INSERT INTO devil_fruits (id, name, japanese_name, english_name, meaning, fruit_debut, usage_debut, type, previous_owner, current_owner, status, url) VALUES (%(id)s, %(name)s, %(japanese_name)s, %(english_name)s, %(meaning)s, %(fruit_debut)s, %(usage_debut)s, %(type)s, %(previous_owner)s, %(current_owner)s, %(status)s, %(url)s) ON CONFLICT DO NOTHING"
+    insert_df = "INSERT INTO devil_fruits (name, japanese_name, english_name, meaning, fruit_debut, usage_debut, type, previous_owner, current_owner, status, url) VALUES (%(name)s, %(japanese_name)s, %(english_name)s, %(meaning)s, %(fruit_debut)s, %(usage_debut)s, %(type)s, %(previous_owner)s, %(current_owner)s, %(status)s, %(url)s) ON CONFLICT DO NOTHING"
     for df in devil_fruits:
         df_data = {
-            'id': df.get('id'),
             'name': df.get('name'),
             'japanese_name': df.get('japanese_name'),
             'english_name': df.get('english_name'),

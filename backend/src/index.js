@@ -21,15 +21,11 @@ app.get("/", (req, res) => {
     res.send("One Piece API backend is running ⚓");
 });
 
-// app.get("/characters/:id",)
-
 // routes
 app.use('/characters', characterRouter);
 app.use('/devil-fruits', devilFruitRouter);
 
-
 app.listen(PORT, () => console.log('🚀 Server running on port ' + PORT));
-
 
 /*
 Example tests:

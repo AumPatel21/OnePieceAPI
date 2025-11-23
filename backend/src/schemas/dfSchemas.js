@@ -24,5 +24,22 @@ export const dfQuerySchema = z.object({
     }),
 });
 
+// for POST requests
+export const createDevilFruitSchema = z.object({
+    body: z.object({
+        name: z.string(),
+        japanese_name: z.string().optional(),
+        english_name: z.string().optional(),
+        meaning: z.string().optional(),
+        fruit_debut: z.string().optional(),
+        usage_debut: z.string().optional(),
+        type: z.string().optional(),
+        previous_owner: z.string().optional(),
+        current_owner: z.string().optional(),
+        status: z.string().optional(),
+        url: z.string().optional(),
+    })
+});
+
 // for PUT requests
 export const updateDfSchema = dfQuerySchema.partial();

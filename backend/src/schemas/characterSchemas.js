@@ -34,23 +34,26 @@ export const characterQuerySchema = z.object({
     }),
 });
 
+// for POST requests
 export const createCharacterSchema = z.object({
-    name: z.string(),
-    japanese_name: z.string().optional(),
-    df_id: z.number().nullable().optional(),
-    debut: z.string().optional(),
-    affiliations: z.string().optional(),
-    occupation: z.string().optional(),
-    origin: z.string().optional(),
-    residence: z.string().optional(),
-    alias: z.string().optional(),
-    epithet: z.string().optional(),
-    status: z.string().optional(),
-    age: z.number().optional(),
-    birthday: z.string().optional(),
-    blood_type: z.string().optional(),
-    bounty: z.string().optional(),
-    url: z.string().optional(),
+    body: z.object({
+        name: z.string(),
+        japanese_name: z.string().optional(),
+        df_id: z.number().nullable().optional(),
+        debut: z.string().optional(),
+        affiliations: z.string().optional(),
+        occupation: z.string().optional(),
+        origin: z.string().optional(),
+        residence: z.string().optional(),
+        alias: z.string().optional(),
+        epithet: z.string().optional(),
+        status: z.string().optional(),
+        age: z.number().optional(),
+        birthday: z.string().optional(),
+        blood_type: z.string().optional(),
+        bounty: z.string().optional(),
+        url: z.string().optional(),
+    })
 });
 
 // for PUT requests
