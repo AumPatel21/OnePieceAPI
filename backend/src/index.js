@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan'
 import dotenv from 'dotenv';
+import rateLimit from 'express-rate-limit'
 import characterRouter from './routes/characterRoutes.js';
 import devilFruitRouter from './routes/devilFruitRoutes.js';
 import errorHandler from './middleware/errorHandler.js';
@@ -12,6 +13,13 @@ dotenv.config()
 const app = express();
 const PORT = 3000;
 
+const apiRequestLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,   // 15 mins
+    max: 100,   // 100 requests per window for each IP
+    message: "Too many requests, try again later."
+});
+
+app.use(apiRequestLimiter);
 app.use(cors());
 app.use(express.json());
 app.use(morgan("dev"));
