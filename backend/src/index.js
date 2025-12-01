@@ -16,7 +16,11 @@ const PORT = 3000;
 const apiRequestLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,   // 15 mins
     max: 100,   // 100 requests per window for each IP
-    message: "Too many requests, try again later."
+    // message: "Too many requests, try again later."
+    handler: (req, res) => {
+        console.log(`⚠️ Rate limit hit from ${req.ip} on ${req.originalUrl}`);
+        return res.status(429).json({ error: "Too many requests" });
+    }
 });
 
 app.use(apiRequestLimiter);

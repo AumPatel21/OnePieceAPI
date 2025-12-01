@@ -1,45 +1,48 @@
 services:
-  db:
-    image: postgres:15
-    container_name: onepiece_db
-    environment:
-      POSTGRES_USER: aum
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: onepiece
-    ports:
-      - "5432:5432"
-    volumes:
-      - ./db_data:/var/lib/postgresql/data
-      - ./data/schema.sql:/docker-entrypoint-initdb.d/1_schema.sql
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U aum -d onepiece"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
+    db:
+        image: postgres:15
+        container_name: onepiece_db
+        environment:
+            POSTGRES_USER: aum
+            POSTGRES_PASSWORD: password
+            POSTGRES_DB: onepiece
+        ports:
+            - "5432:5432"
+        volumes:
+            - ./db_data:/var/lib/postgresql/data
+        healthcheck:
+            test: ["CMD-SHELL", "pg_isready -U aum -d onepiece"]
+            interval: 5s
+            timeout: 5s
+            retries: 5
 
-  backend:
-    build: ./backend
-    container_name: onepiece_backend
-    ports:
-      - "3000:3000"
-    depends_on:
-      db:
-        condition: service_healthy
-    environment:
-      DB_HOST: db
-      DB_NAME: onepiece
-      DB_USER: aum
-      DB_PASSWORD: password
-      # DATABASE_URL: "postgresql://aum:password@db:5432/onepiece"
+    backend:
+        build: ./backend
+        container_name: onepiece_backend
+        ports:
+            - "3000:3000"
+        depends_on:
+            db:
+                condition: service_healthy
+        environment:
+            DB_HOST: db
+            DB_NAME: onepiece
+            DB_USER: aum
+            DB_PASSWORD: password
+        volumes:
+            - ./backend:/app
+            - ./scripts:/scripts
+            - ./data:/data
+            # DATABASE_URL: "postgresql://aum:password@db:5432/onepiece"
 
-  scraper:
-    build: .
-    container_name: onepiece_scraper
-    depends_on:
-      db:
-        condition: service_healthy
-    environment:
-      DB_HOST: db
-      DB_NAME: onepiece
-      DB_USER: aum
-      DB_PASSWORD: password
+    # scraper:
+    #   build: .
+    #   container_name: onepiece_scraper
+    #   depends_on:
+    #     db:
+    #       condition: service_healthy
+    #   environment:
+    #     DB_HOST: db
+    #     DB_NAME: onepiece
+    #     DB_USER: aum
+    #     DB_PASSWORD: password
