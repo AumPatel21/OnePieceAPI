@@ -11,7 +11,7 @@ import errorHandler from './middleware/errorHandler.js';
 dotenv.config()
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 const apiRequestLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,   // 15 mins
@@ -22,12 +22,11 @@ const apiRequestLimiter = rateLimit({
         return res.status(429).json({ error: "Too many requests" });
     }
 });
-
 app.use(apiRequestLimiter);
+
 app.use(cors());
 app.use(express.json());
 app.use(morgan("dev"));
-app.use(errorHandler)
 
 app.get("/", (req, res) => {
     res.send("One Piece API backend is running ⚓");
@@ -36,6 +35,8 @@ app.get("/", (req, res) => {
 // routes
 app.use('/characters', characterRouter);
 app.use('/devil-fruits', devilFruitRouter);
+
+app.use(errorHandler);
 
 app.listen(PORT, () => console.log('🚀 Server running on port ' + PORT));
 
