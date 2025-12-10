@@ -6,6 +6,7 @@ import rateLimit from 'express-rate-limit'
 import characterRouter from './routes/characterRoutes.js';
 import devilFruitRouter from './routes/devilFruitRoutes.js';
 import errorHandler from './middleware/errorHandler.js';
+import { setupSwagger } from './utils/swagger.js';
 
 // load environment variables
 dotenv.config()
@@ -27,6 +28,8 @@ app.use(apiRequestLimiter);
 app.use(cors());
 app.use(express.json());
 app.use(morgan("dev"));
+
+setupSwagger(app);
 
 app.get("/", (req, res) => {
     res.send("One Piece API backend is running ⚓");

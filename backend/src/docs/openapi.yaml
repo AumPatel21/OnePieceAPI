@@ -1,0 +1,41 @@
+openapi: 3.1.0
+info:
+    title: One Piece API
+    version: 1.0.0
+paths:
+    /characters:
+        get:
+            summary: Get all characters
+            responses:
+                "200":
+                    description: OK
+    /characters/{id}:
+        get:
+            summary: Get character by ID
+            parameters:
+                - in: path
+                  name: id
+                  required: true
+                  schema:
+                      type: integer
+            responses:
+                "200":
+                    description: OK
+    /devil-fruits:
+        get:
+            summary: Get all characters
+            responses:
+                "200":
+                    description: OK
+    /devil-fruits/{id}:
+        get:
+            summary: Get character by ID
+            parameters:
+                - in: path
+                  name: id
+                  required: true
+                  schema:
+                      type: integer
+            responses:
+                "200":
+                    description: OK
