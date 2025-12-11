@@ -1,41 +1,113 @@
 openapi: 3.1.0
 info:
-    title: One Piece API
-    version: 1.0.0
+  title: One Piece API
+  version: 1.0.0
+
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-KEY
+
 paths:
-    /characters:
-        get:
-            summary: Get all characters
-            responses:
-                "200":
-                    description: OK
-    /characters/{id}:
-        get:
-            summary: Get character by ID
-            parameters:
-                - in: path
-                  name: id
-                  required: true
-                  schema:
-                      type: integer
-            responses:
-                "200":
-                    description: OK
-    /devil-fruits:
-        get:
-            summary: Get all characters
-            responses:
-                "200":
-                    description: OK
-    /devil-fruits/{id}:
-        get:
-            summary: Get character by ID
-            parameters:
-                - in: path
-                  name: id
-                  required: true
-                  schema:
-                      type: integer
-            responses:
-                "200":
-                    description: OK
+  /characters/{id}:
+    get:
+      summary: Get a character by ID
+      description: This resource RETRIEVES an individual character identified by a numeric `id`.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+    delete:
+      summary: Delete a character by ID
+      description: This resource DELETES an individual character identified by a numeric `id`.
+      security:
+        - ApiKeyAuth: []
+      responses:
+        "204":
+          description: OK (Authenticated successfully)
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+
+  /characters:
+    get:
+      summary: Get all characters
+      description: Retrieve a list of all characters from the One Piece universe. (default 10 characters per page)
+      responses:
+        "200":
+          description: OK
+    post:
+      summary: Create a new character
+      description: Create a new character in the One Piece universe.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                japanese_name:
+                  type: [string, null]
+                df_id:
+                  type: [integer, null]
+                debut:
+                  type: [string, null]
+                affiliations:
+                  type: [string, null]
+                occupation:
+                  type: [string, null]
+                origin:
+                  type: [string, null]
+                residence:
+                  type: [string, null]
+                alias:
+                  type: [string, null]
+                epithet:
+                  type: [string, null]
+                status:
+                  type: [string, null]
+                age:
+                  type: [string, null]
+                birthday:
+                  type: [string, null]
+                blood_type:
+                  type: [string, null]
+                bounty:
+                  type: [string, null]
+              required:
+                - name
+      responses:
+        "201":
+          description: Created
+  /devil-fruits:
+    get:
+      summary: Get all devil fruits
+      description: Retrieve a list of all devil fruits from the One Piece universe. (default 10 devil fruits per page)
+      responses:
+        "200":
+          description: OK
+  /devil-fruits/{id}:
+    get:
+      summary: Get devil fruit by ID
+      description: This resource represents an individual devil fruit identified by a numeric `id`.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
