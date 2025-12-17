@@ -17,9 +17,6 @@ const options = {
                 }
             }
         },
-        security: [
-            { ApiKeyAuth: [] }
-        ]
     },
     apis: ["./src/docs/openapi.yaml"],
 }

@@ -10,7 +10,7 @@ characterRouter.get('/', validate(characterQuerySchema), getCharacters);
 characterRouter.get('/:id', validate(characterQuerySchema), getCharacterById);
 
 characterRouter.post("/", authAdmin, validate(createCharacterSchema), createCharacter)
-characterRouter.put('/:id', authAdmin, validate(updateCharacterSchema), updateCharacter);
+characterRouter.patch('/:id', authAdmin, validate(updateCharacterSchema), updateCharacter);
 characterRouter.delete('/:id', authAdmin, deleteCharacter);
 
 export default characterRouter;

@@ -10,7 +10,7 @@ devilFruitRouter.get('/', validate(dfQuerySchema), getDevilFruits);
 devilFruitRouter.get('/:id', validate(dfQuerySchema), getDevilFruitbyId);
 
 devilFruitRouter.post('/', authAdmin, validate(createDevilFruitSchema), createDevilFruit)
-devilFruitRouter.put('/:id', authAdmin, validate(updateDfSchema), updateDevilFruit);
+devilFruitRouter.patch('/:id', authAdmin, validate(updateDfSchema), updateDevilFruit);
 devilFruitRouter.delete('/:id', authAdmin, deleteDevilFruit)
 
 export default devilFruitRouter;

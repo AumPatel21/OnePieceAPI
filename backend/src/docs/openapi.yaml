@@ -14,7 +14,7 @@ paths:
   /characters/{id}:
     get:
       summary: Get a character by ID
-      description: This resource RETRIEVES an individual character identified by a numeric `id`.
+      description: RETRIEVES an individual character identified by a numeric `id`.
       parameters:
         - in: path
           name: id
@@ -23,32 +23,33 @@ paths:
             type: integer
       responses:
         "200":
-          description: OK
+          description: Character fetched successfully.
     delete:
       summary: Delete a character by ID
-      description: This resource DELETES an individual character identified by a numeric `id`.
+      description: DELETES an individual character identified by a numeric `id`. ADMIN ONLY.
       security:
         - ApiKeyAuth: []
-      responses:
-        "204":
-          description: OK (Authenticated successfully)
       parameters:
         - in: path
           name: id
           required: true
           schema:
             type: integer
-
-  /characters:
-    get:
-      summary: Get all characters
-      description: Retrieve a list of all characters from the One Piece universe. (default 10 characters per page)
       responses:
-        "200":
-          description: OK
-    post:
-      summary: Create a new character
-      description: Create a new character in the One Piece universe.
+        "204":
+          description: Character deleted successfully.
+    patch:
+      deprecated: false
+      summary: Partially update a character by ID
+      description: UPDATES one or more field of a character identified by a numeric `id`. Only provided fields are updated. ADMIN ONLY.
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
       requestBody:
         required: true
         content:
@@ -59,49 +60,91 @@ paths:
                 name:
                   type: string
                 japanese_name:
-                  type: [string, null]
-                df_id:
-                  type: [integer, null]
+                  type: string
                 debut:
-                  type: [string, null]
+                  type: string
                 affiliations:
-                  type: [string, null]
+                  type: string
                 occupation:
-                  type: [string, null]
+                  type: string
                 origin:
-                  type: [string, null]
+                  type: string
                 residence:
-                  type: [string, null]
+                  type: string
                 alias:
-                  type: [string, null]
+                  type: string
                 epithet:
-                  type: [string, null]
+                  type: string
                 status:
-                  type: [string, null]
+                  type: string
                 age:
-                  type: [string, null]
+                  type: string
                 birthday:
-                  type: [string, null]
+                  type: string
                 blood_type:
-                  type: [string, null]
+                  type: string
                 bounty:
-                  type: [string, null]
+                  type: string
+      responses:
+        "200":
+          description: Character updated successfully.
+  /characters:
+    get:
+      summary: Get all characters
+      description: RETRIEVES a list of all characters from the One Piece universe. (default 10 characters per page)
+      responses:
+        "200":
+          description: Character fetched successfully.
+    post:
+      summary: CREATE a new character
+      description: CREATE a new character in the One Piece universe. ADMIN ONLY.
+      security:
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                japanese_name:
+                  type: string
+                debut:
+                  type: string
+                affiliations:
+                  type: string
+                occupation:
+                  type: string
+                origin:
+                  type: string
+                residence:
+                  type: string
+                alias:
+                  type: string
+                epithet:
+                  type: string
+                status:
+                  type: string
+                age:
+                  type: string
+                birthday:
+                  type: string
+                blood_type:
+                  type: string
+                bounty:
+                  type: string
               required:
                 - name
       responses:
         "201":
-          description: Created
-  /devil-fruits:
-    get:
-      summary: Get all devil fruits
-      description: Retrieve a list of all devil fruits from the One Piece universe. (default 10 devil fruits per page)
-      responses:
-        "200":
-          description: OK
+          description: Character created successfully.
+
   /devil-fruits/{id}:
     get:
       summary: Get devil fruit by ID
-      description: This resource represents an individual devil fruit identified by a numeric `id`.
+      description: RETRIEVES an individual devil fruit identified by a numeric `id`.
       parameters:
         - in: path
           name: id
@@ -110,4 +153,108 @@ paths:
             type: integer
       responses:
         "200":
-          description: OK
+          description: Devil fruit fetched successfully.
+    delete:
+      summary: Delete a devil fruit by ID
+      description: DELETES an individual devil fruit identified by a numeric `id`. ADMIN ONLY.
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Devil fruit deleted successfully.
+    patch:
+      deprecated: false
+      summary: Partially update a devil fruit by ID
+      description: UPDATES one or more field of a devil fruit. Only provided fields are updated. ADMIN ONLY.
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                japanese_name:
+                  type: string
+                english_name:
+                  type: string
+                meaning:
+                  type: string
+                fruit_debut:
+                  type: string
+                usage_debut:
+                  type: string
+                type:
+                  type: string
+                previous_owner:
+                  type: string
+                current_owner:
+                  type: string
+                status:
+                  type: string
+                url:
+                  type: string
+      responses:
+        "200":
+          description: Devil fruit updated successfully.
+  /devil-fruits:
+    get:
+      summary: Get all devil fruits
+      description: RETRIEVES a list of all devil fruits from the One Piece universe. (default 10 devil fruits per page)
+      responses:
+        "200":
+          description: Devil fruit fetched successfully.
+    post:
+      summary: Create a new devil fruit
+      description: CREATE a new devil fruit in the One Piece universe. ADMIN ONLY.
+      security:
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                japanese_name:
+                  type: string
+                english_name:
+                  type: string
+                meaning:
+                  type: string
+                fruit_debut:
+                  type: string
+                usage_debut:
+                  type: string
+                type:
+                  type: string
+                previous_owner:
+                  type: string
+                current_owner:
+                  type: string
+                status:
+                  type: string
+                url:
+                  type: string
+              required:
+                - name
+      responses:
+        "201":
+          description: Devil fruit created successfully.

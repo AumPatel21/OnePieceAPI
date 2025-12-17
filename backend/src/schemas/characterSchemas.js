@@ -48,7 +48,7 @@ export const createCharacterSchema = z.object({
         alias: z.string().optional(),
         epithet: z.string().optional(),
         status: z.string().optional(),
-        age: z.number().optional(),
+        age: z.string().optional(),
         birthday: z.string().optional(),
         blood_type: z.string().optional(),
         bounty: z.string().optional(),

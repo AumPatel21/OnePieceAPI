@@ -41,5 +41,5 @@ export const createDevilFruitSchema = z.object({
     })
 });
 
-// for PUT requests
+// for patch requests
 export const updateDfSchema = dfQuerySchema.partial();
