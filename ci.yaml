@@ -1,0 +1,141 @@
+name: CI (local-friendly)
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+env:
+  # ttl.sh is a free, ephemeral, anonymous container registry.
+  # Images are automatically deleted after 24h — perfect for demos.
+  # Format: ttl.sh/<any-unique-name>:<tag>
+  REGISTRY: ttl.sh
+  IMAGE_NAME: ttl.sh/gitops-app-${{ github.repository_owner }}
+  IMAGE_TAG: sha-${{ github.sha }}
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  # ──────────────────────────────────────────────
+  # 1. Lint + Test
+  # ──────────────────────────────────────────────
+  test:
+    name: Lint & Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Lint
+        run: npm run lint
+        with:
+          version: latest
+
+      - name: Run tests
+        run: npm test
+
+      - name: Upload coverage
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: coverage.out
+
+  # ──────────────────────────────────────────────
+  # 2. Build, Scan, Push to ttl.sh (no auth needed)
+  # ──────────────────────────────────────────────
+  build-push:
+    name: Build → Scan → Push
+    runs-on: ubuntu-latest
+    needs: test
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # ttl.sh requires no login — just push directly
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build image (load locally for scanning)
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: false
+          tags: ${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
+          load: true
+
+      - name: Scan with Trivy
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
+          format: table
+          exit-code: "1"
+          severity: CRITICAL
+          ignore-unfixed: true
+
+      - name: Generate SBOM
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
+          format: cyclonedx
+          output: sbom.json
+
+      - name: Upload SBOM
+        uses: actions/upload-artifact@v4
+        with:
+          name: sbom
+          path: sbom.json
+
+      # Push to ttl.sh — no credentials required
+      - name: Push to ttl.sh
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: |
+            ${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
+            ${{ env.IMAGE_NAME }}:latest
+
+  # ──────────────────────────────────────────────
+  # 3. Bump image tag in config repo
+  # ──────────────────────────────────────────────
+  promote-dev:
+    name: Promote to dev
+    runs-on: ubuntu-latest
+    needs: build-push
+
+    steps:
+      - name: Checkout config repo
+        uses: actions/checkout@v4
+        with:
+          repository: AumPatel21/gitops-config
+          token: ${{ secrets.CONFIG_REPO_TOKEN }}
+          path: config
+
+      - name: Install yq
+        uses: mikefarah/yq@v4
+
+      - name: Bump image tag in dev values
+        run: |
+          yq e -i '.image.repository = "${{ env.IMAGE_NAME }}"' config/envs/dev/values.yaml
+          yq e -i '.image.tag = "${{ env.IMAGE_TAG }}"' config/envs/dev/values.yaml
+
+      - name: Commit and push
+        run: |
+          cd config
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add envs/dev/values.yaml
+          git commit -m "chore(dev): bump image to ${{ env.IMAGE_TAG }}"
+          git push
