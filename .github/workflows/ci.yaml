@@ -39,8 +39,6 @@ jobs:
 
       - name: Lint
         run: npm run lint
-        with:
-          version: latest
 
       - name: Run tests
         run: npm test
