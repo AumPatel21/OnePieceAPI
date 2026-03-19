@@ -25,6 +25,9 @@ jobs:
   test:
     name: Lint & Test
     runs-on: ubuntu-latest
+    defaults: # Set the default working directory for all steps in this job
+      run:
+        working-directory: backend
     steps:
       - uses: actions/checkout@v4
 
