@@ -11,7 +11,7 @@ env:
   # Images are automatically deleted after 24h — perfect for demos.
   # Format: ttl.sh/<any-unique-name>:<tag>
   REGISTRY: ttl.sh
-  IMAGE_NAME: ttl.sh/gitops-app-${{ github.repository_owner }}
+  IMAGE_NAME: ttl.sh/gitops-app-aumpatel21
   IMAGE_TAG: sha-${{ github.sha }}
 
 permissions:
